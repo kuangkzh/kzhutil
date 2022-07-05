@@ -2,7 +2,7 @@
 
 Bisect
 -----------
-#### MappingSpace (arr: Sequence, key: Callable)
+### MappingSpace (arr: Sequence, key: Callable)
 Bisect in python < 3.9 have no key parameter. Use MappingSpace for map f: arr->f(arr) for bisect model.
 
 python < 3.9 的 bisect 不带key参数，可以用这个类作为映射：
@@ -20,26 +20,26 @@ File
 一些将读写json、csv和普通文件浓缩成一行的方法
 
 read write or append a file in one line: 
-#### read_from_file(fn, binary=False, encoding=None)
-#### write_over_file(fn, s: AnyStr, binary=False, encoding=None)
-#### append_to_file(fn, s: AnyStr, binary=False, encoding=None)
+### read_from_file(fn, binary=False, encoding=None)
+### write_over_file(fn, s: AnyStr, binary=False, encoding=None)
+### append_to_file(fn, s: AnyStr, binary=False, encoding=None)
 
 -----------
-jsonl file(list of jsons separated into lines)
-#### write_jsonl(fn, data: List[object], encoding=None)
-#### read_jsonl(fn, encoding=None)
+jsonl file: list of jsons separated into lines
+### write_jsonl(fn, data: List[object], encoding=None)
+### read_jsonl(fn, encoding=None)
 
 -----------
 csv file
-#### read_csv(fn, encoding=None)
-#### write_csv(fn, data: List[object], encoding=None)
-#### read_csv_dict(fn, encoding=None)
-#### write_csv_dict(fn, fieldnames, data: List[Dict], encoding=None)
+### read_csv(fn, encoding=None)
+### write_csv(fn, data: List[object], encoding=None)
+### read_csv_dict(fn, encoding=None)
+### write_csv_dict(fn, fieldnames, data: List[Dict], encoding=None)
 
 
 Functools
 -----------
-#### try_for(n)
+### try_for(n)
 A decorator to try a function up to n times till success. Useful for function with failure probability. e.g. web crawler.
 
 一个函数装饰器，可以让后面的函数最多尝试n次，直到某次运行成功再返回。适合用于爬虫这类有成果概率的场景。
@@ -73,36 +73,36 @@ Hash string/bytes in one line and return hex string. All hash functions:
 
 io_util
 -----------
-#### get_clipboard()
+### get_clipboard()
 Windows Only. 获得剪切板内容，只支持windows平台。
-#### set_clipboard(s: AnyStr)
+### set_clipboard(s: AnyStr)
 Windows Only. 设置剪切板内容，只支持windows平台。
 
 
 Math
 ----------
-#### normalize(array, **kwargs)
+### normalize(array, **kwargs)
 Normalize the array to standard normal distribution. 正态分布归一化
 
 array: numpy.ndarray or torch.Tensor.
 
 **kwargs: (axis, keepdims) for numpy or (dim, keepdim) for pytorch.
 
-#### uniform_normalize(array, **kwargs)
+### uniform_normalize(array, **kwargs)
 Normalize the array to uniform distribution [0, 1]. 归一化
 
 array: numpy.ndarray or torch.Tensor.
 
 **kwargs: (axis, keepdims) for numpy or (dim, keepdim) for pytorch.
 
-#### primes(n)
+### primes(n)
 Get all primes not large than n.
 ```python
 from kzhutil.math import primes
 primes(19)  # [2, 3, 5, 7, 11, 13, 17, 19]
 ```
 
-#### exgcd(a, b)
+### exgcd(a, b)
 Get solution x, y for ax+by=gcd(a,b).
 
 return: x, y, gcd(a, b)
@@ -111,40 +111,40 @@ from kzhutil.math import exgcd
 exgcd(18, 44)   # 5, -2, 2
 ```
 
-#### inverse(x, n)
+### inverse(x, n)
 Get the inverse element ![](https://latex.codecogs.com/gif.latex?x^{-1}) of ![](https://latex.codecogs.com/gif.latex?x) in ![](https://latex.codecogs.com/gif.latex?Z_n) where ![](https://latex.codecogs.com/svg.image?x%5E%7B-1%7Dx%5Cequiv%201%5C%20(mod%5C%20n))
 
-#### continued_fraction(d, eps=1e-12, max_denominator=100000000)
-Calculate continued fraction coefficients [a0, a1, a2, ...] of d = a0 + 1/(a1 + 1/(a2 + 1/(a3 + ...)))
+### continued_fraction(d, eps=1e-12, max_denominator=100000000)
+Calculate continued fraction coefficients [a0, a1, a2, ...] of ![](https://latex.codecogs.com/svg.image?d=a_0&plus;\frac{1}{a_1&plus;\frac{1}{a_2&plus;\frac{1}{a_3&plus;...}}})
 
 e.g. π -> [3, 7, 15, 1, 292, 1, 1, 1, 2, 1, 3]
 
-#### convergent_fraction(a)
+### convergent_fraction(a)
 Get the convergent fraction of a cotinued fraction. e.g. [3, 7, 15, 1] -> 355/113
 
 
-#### miller_rabin(n, test_time=16)
+### miller_rabin(n, test_time=16)
 Miller-Rabin prime test with time complexity in ![](https://latex.codecogs.com/svg.image?O(klog^3(n))).
 The error rate is approximate to ![](https://latex.codecogs.com/svg.image?(1%2F4)%5Ek)
 
-#### next_prime(n)
+### next_prime(n)
 Get the next prime of n (n>2)
 
-#### random_prime(n)
+### random_prime(n)
 Get a random prime smaller than ![](https://latex.codecogs.com/svg.image?10^n)
 
-#### euler_phi(n)
+### euler_phi(n)
 Euler's totient function.
 
 torch
 ----------
 utils for pyroch
-#### set_seed(seed)
+### set_seed(seed)
 set seed for torch, numpy, random
 
 transformers
 -----------
-#### load_pretrained(model_class, model_name, model_path, **kwargs)
+### load_pretrained(model_class, model_name, model_path, **kwargs)
 Load pretrained transformers. If a saved model provided in `model_path`, then load directly. Else load from hub and save to `model_path`.
 ```python
 from kzhutil.transformers import load_pretrained
