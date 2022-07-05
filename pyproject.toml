@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=42", "pybind11>=2.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kzhutil"
+version = "0.0.1"
+authors = [
+  { name="kuangzh", email="kuangzh@smail.nju.edu.cn" },
+]
+description = "some python utils"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.5"
+
+[project.urls]
+"Homepage" = "https://github.com/kuangkzh/kzhutil"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["kzhutil/*"]
+exclude = []
