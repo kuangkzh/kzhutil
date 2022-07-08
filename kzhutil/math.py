@@ -75,7 +75,7 @@ def convergent_fraction(a):
     return fractions.Fraction(p, q)
 
 
-primes_1000 = primes(1000)
+primes_1000 = set(primes(1000))
 
 
 def miller_rabin(n, test_time=16):
@@ -85,8 +85,8 @@ def miller_rabin(n, test_time=16):
     :param test_time: how many miller-rabin test to try. the error rate is approximate to (1/4)^t
     :return: if n is a prime
     """
-    if n < 3 or n % 2 == 0:
-        return n == 2
+    if n <= 1000:
+        return n in primes_1000
     if any(n % p == 0 for p in primes_1000):
         return False
     u, t = n-1, 0

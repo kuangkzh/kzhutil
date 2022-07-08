@@ -1,6 +1,13 @@
 import json
 import csv
+import sys
+import math
+from kzhutil.functools import try_until
 from typing import List, Dict, AnyStr
+
+
+maxInt = sys.maxsize
+try_until(csv.field_size_limit, [maxInt//(2**i) for i in range(int(math.log2(maxInt)))])
 
 
 def read_from_file(fn, binary=False, encoding=None):

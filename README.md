@@ -59,6 +59,16 @@ def func():
 
 print(func())   # 10 1 0 4 3 success
 ```
+### try_for_(n, f: Callable, *args, **kwargs)
+The kernel of try_for(n)
+
+### try_until(f: Callable, args: Iterable)
+try f(*args[0]), f(*args[1]), f(*args[2]), ... until success then return
+
+### repeat_for(n)
+repeat a function for n times
+### repeat_for_(n, f: Callable, *args, **kwargs)
+
 
 
 Hash

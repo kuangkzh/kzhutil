@@ -9,7 +9,6 @@ namespace py = pybind11;
 
 
 vector<int> primes(int n){
-    // TODO: euler algorithm
     vector<int> res;
     char* flags = new char[n+1]();
     int range = sqrt(n)+1;

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kzhutil"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="kuangzh", email="kuangzh@smail.nju.edu.cn" },
 ]
@@ -18,5 +18,5 @@ requires-python = ">=3.5"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["kzhutil/*"]
+include = ["kzhutil"]
 exclude = []
