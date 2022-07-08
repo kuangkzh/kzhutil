@@ -15,7 +15,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='kzhutil',
-    version='0.0.2',
+    version='0.0.3',
     author='kuangzh',
     author_email='kuangzh@smail.nju.edu.cn',
     url='https://github.com/kuangkzh/kzhutil',
