@@ -133,15 +133,29 @@ e.g. π -> [3, 7, 15, 1, 292, 1, 1, 1, 2, 1, 3]
 Get the convergent fraction of a cotinued fraction. e.g. [3, 7, 15, 1] -> 355/113
 
 
-### miller_rabin(n, test_time=16)
+### miller_rabin(n, k=16)
 Miller-Rabin prime test with time complexity in ![](https://latex.codecogs.com/svg.image?O(klog^3(n))).
 The error rate is approximate to ![](https://latex.codecogs.com/svg.image?(1%2F4)%5Ek)
+
+If k is 0, use deterministic miller test(deterministic if generalized Riemann hypothesis proved).
 
 ### next_prime(n)
 Get the next prime of n (n>2)
 
 ### random_prime(n)
 Get a random prime smaller than ![](https://latex.codecogs.com/svg.image?10^n)
+
+### factorization(n, deterministic=False)
+return factors and exponents of n. (may run for real long time)
+```python
+import kzhutil
+n = 357686312646216567629136   # 2*2*2*2*3*41*307*367*1061*1520398399903
+kzhutil.math.factorization(n)   # {2: 4, 3: 1, 41: 1, 307: 1, 367: 1, 1061: 1, 1520398399903: 1}
+```
+
+### lucas_test(n)
+A deterministic primality test (may run for real long time).
+The running speed determined by whether n-1 is well factorized.
 
 ### euler_phi(n)
 Euler's totient function.

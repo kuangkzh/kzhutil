@@ -49,7 +49,7 @@ def append_to_file(fn, s: AnyStr, binary=False, encoding=None):
         return f.write(s)
 
 
-def write_jsonl(fn, data: List[object], encoding=None):
+def write_jsonl(fn, data: List[object], encoding=None, **json_kwargs):
     """
     write data to a jsonl file, where a long list is split into lines of json
 
@@ -58,10 +58,10 @@ def write_jsonl(fn, data: List[object], encoding=None):
     :param encoding:
     """
     with open(fn, 'w', encoding=encoding) as f:
-        return f.write("\n".join([json.dumps(dl) for dl in data]))
+        return f.write("\n".join([json.dumps(dl, **json_kwargs) for dl in data]))
 
 
-def read_jsonl(fn, encoding=None) -> List[object]:
+def read_jsonl(fn, encoding=None, **json_kwargs) -> List[object]:
     """
     read from a jsonl file, where a long list is split into lines of json
 
@@ -70,10 +70,10 @@ def read_jsonl(fn, encoding=None) -> List[object]:
     :param encoding:
     """
     with open(fn, 'r', encoding=encoding) as f:
-        return [json.loads(dl) for dl in f.readlines()]
+        return [json.loads(dl, **json_kwargs) for dl in f.readlines()]
 
 
-def read_csv(fn, encoding=None):
+def read_csv(fn, encoding=None, **csv_kwargs):
     """
     read a csv(comma-separated values) file
 
@@ -82,10 +82,10 @@ def read_csv(fn, encoding=None):
     :param encoding:
     """
     with open(fn, 'r', newline='', encoding=encoding) as f:
-        return [*csv.reader(f)]
+        return [*csv.reader(f, **csv_kwargs)]
 
 
-def write_csv(fn, data: List[object], encoding=None):
+def write_csv(fn, data: List[object], encoding=None, **csv_kwargs):
     """
     write to a file
 
@@ -94,12 +94,12 @@ def write_csv(fn, data: List[object], encoding=None):
     :param encoding:
     """
     with open(fn, 'w', newline='', encoding=encoding) as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, **csv_kwargs)
         for row in data:
             writer.writerow(row)
 
 
-def read_csv_dict(fn, encoding=None):
+def read_csv_dict(fn, encoding=None, **csv_kwargs):
     """
     read a csv(comma-separated values) file
 
@@ -108,10 +108,10 @@ def read_csv_dict(fn, encoding=None):
     :param encoding:
     """
     with open(fn, 'r', newline='', encoding=encoding) as f:
-        return [*csv.DictReader(f)]
+        return [*csv.DictReader(f, **csv_kwargs)]
 
 
-def write_csv_dict(fn, fieldnames, data: List[Dict], encoding=None):
+def write_csv_dict(fn, fieldnames, data: List[Dict], encoding=None, **csv_kwargs):
     """
     write to a file
 
@@ -121,7 +121,7 @@ def write_csv_dict(fn, fieldnames, data: List[Dict], encoding=None):
     :param encoding:
     """
     with open(fn, 'w', newline='', encoding=encoding) as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, **csv_kwargs)
         writer.writeheader()
         for row in data:
             writer.writerow(row)

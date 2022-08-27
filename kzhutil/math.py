@@ -2,6 +2,7 @@ import math
 import random
 import fractions
 import _kzhutil
+from .baillie_psw import baillie_psw
 
 
 def normalize(array, **kwargs):
@@ -76,13 +77,15 @@ def convergent_fraction(a):
 
 
 primes_1000 = set(primes(1000))
+DEFAULT_MILLER_RABIN_K = 16
 
 
-def miller_rabin(n, test_time=16):
+def miller_rabin(n, k=DEFAULT_MILLER_RABIN_K):
     """
     Miller-Rabin prime test
     :param n: the number
-    :param test_time: how many miller-rabin test to try. the error rate is approximate to (1/4)^t
+    :param k: how many miller-rabin test to try. the error rate is approximate to (1/4)^k.
+              if k is 0, use deterministic miller test(deterministic if generalized Riemann hypothesis proved).
     :return: if n is a prime
     """
     if n <= 1000:
@@ -92,8 +95,8 @@ def miller_rabin(n, test_time=16):
     u, t = n-1, 0
     while u % 2 == 0:   # divide n-1 = u * 2^t
         u, t = u//2, t+1
-    for i in range(test_time):
-        a = random.randint(0, 2**31) % (n - 2) + 2
+    test_base = [random.randint(2, min(2**31, n-2)) for _ in range(k)] if k else range(2, min(n-2, int(math.log(n)**2*2)))
+    for a in test_base:
         v = pow(a, u, n)    # a^u mod n
         if v == 1: continue
         for _ in range(t):
@@ -104,24 +107,62 @@ def miller_rabin(n, test_time=16):
     return True
 
 
-def next_prime(n):
+def next_prime(n, deterministic=False):
     """
     the next prime of n (n>2)
     """
     n += 1 if n % 2 == 0 else 2
-    while not miller_rabin(n):
+    while not miller_rabin(n, 0 if deterministic else DEFAULT_MILLER_RABIN_K):
         n += 2
     return n
 
 
-def random_prime(n):
+def random_prime(n, deterministic=False):
     """
     get a random prime contains n digits
     """
     num = 0
     for _ in range(n):
         num = num*10 + random.randint(0, 9)
-    return next_prime(num)
+    return next_prime(num, deterministic)
+
+
+def factorization(n, deterministic=False):
+    """
+    return factors and exponents of n. (may run for real long time)
+    n = p_1^{k_1}*p_2^{k_2}*p_3^{k_3}*... -> {p_1: k_1, p_2: k_2, p_3: k_3, ...}
+    """
+    factors, p = {}, 2
+    while n > 1:
+        if n % p == 0:
+            factors[p] = factors.get(p, 0) + 1
+            n //= p
+        else:
+            p = n if miller_rabin(n, 0 if deterministic else DEFAULT_MILLER_RABIN_K) else next_prime(p, deterministic)
+    return factors
+
+
+def lucas_test(n):
+    """
+    A deterministic primality test (may run for real long time)
+    The running speed determined by whether n-1 is well factorized.
+    """
+    if n <= 1000:
+        return n in primes_1000
+    factors = {}
+    for a in range(2, n):
+        if pow(a, n-1, n) != 1:
+            return False
+        factors = factors if factors else factorization(n-1, True)
+        for q in factors.keys():
+            if pow(a, (n-1)//q, n) == 1:
+                break
+        else:
+            return True
+    return False
+
+
+baillie_psw = baillie_psw
 
 
 def euler_phi(n):
@@ -136,14 +177,21 @@ def euler_phi(n):
     return ans
 
 
-def linear_interp(x, x0, x1):
-    # TODO
-    pass
+def linear_interp(arr, x):
+    import numpy as np
+    x0 = np.floor(x).astype(int).clip(0, arr.shape[0] - 1)
+    x1 = np.floor(np.asarray(x) + 1).astype(int).clip(0, arr.shape[0] - 1)
+    return arr[x0] * (x1 - x) + arr[x1] * (x - x0)
 
 
-def linear_interp2d(x, y, x00, x01, x10, x11):
-    # TODO
-    pass
+def linear_interp2d(arr, x, y):
+    import numpy as np
+    x0 = np.floor(x).astype(int).clip(0, arr.shape[0] - 1)
+    x1 = np.floor(np.asarray(x) + 1).astype(int).clip(0, arr.shape[0] - 1)
+    y0 = np.floor(y).astype(int).clip(0, arr.shape[1] - 1)
+    y1 = np.floor(np.asarray(y) + 1).astype(int).clip(0, arr.shape[1] - 1)
+    return arr[x0, y0] * (x1 - x) * (y1 - y) + arr[x0, y1] * (x1 - x) * (y - y0) + \
+           arr[x1, y0] * (x - x0) * (y1 - y) + arr[x1, y1] * (x - x0) * (y - y0)
 
 
 class Triangle:

@@ -13,6 +13,7 @@ def load_pretrained(model_class, model_name, model_path, **kwargs):
     try:
         model = model_class.from_pretrained(model_path, cache_dir=cache_path, **kwargs)
     except Exception:
+        shutil.rmtree(cache_path)
         model = model_class.from_pretrained(model_name, cache_dir=cache_path, **kwargs)
         model.save_pretrained(model_path)
         shutil.rmtree(cache_path)
