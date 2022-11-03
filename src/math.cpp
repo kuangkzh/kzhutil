@@ -12,8 +12,8 @@ vector<int> primes(int n){
     vector<int> res;
     char* flags = new char[n+1]();
     int range = sqrt(n)+1;
-    for (int i=2; i<=range; i++) if (flags[i] == 0) [[unlikely]] for (int j=i*2; j<=n; j+=i) flags[j] = 1;
-    for (int i=2; i<=n; i++) if(flags[i] == 0) [[unlikely]] res.push_back(i);
+    for (int i=2; i<=range; i++) if (flags[i] == 0) for (int j=i*2; j<=n; j+=i) flags[j] = 1;
+    for (int i=2; i<=n; i++) if(flags[i] == 0) res.push_back(i);
     return res;
 }
 
