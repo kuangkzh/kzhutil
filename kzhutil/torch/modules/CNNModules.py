@@ -102,9 +102,12 @@ class CausalConv1d(nn.Conv1d):
 
 
 class WaveNetLayer(nn.Module):
-    def __init__(self, residual_channels, skip_channels, cond_channels, kernel_size=2, dilation=1):
+    def __init__(self, residual_channels, skip_channels, cond_channels, kernel_size=2, dilation=1, causal_input=False):
         super(WaveNetLayer, self).__init__()
-        self.causal = CausalConv1d(residual_channels, 2 * residual_channels, kernel_size, dilation=dilation, bias=True)
+        if causal_input:
+            self.conv = CausalConv1d(residual_channels, 2 * residual_channels, kernel_size, dilation=dilation, bias=True)
+        else:
+            self.conv = nn.Conv1d(residual_channels, 2 * residual_channels, kernel_size, dilation=dilation, bias=True)
         self.condition = nn.Conv1d(cond_channels, 2 * residual_channels, kernel_size=1, bias=True)
         self.residual = nn.Conv1d(residual_channels, residual_channels, kernel_size=1, bias=True)
         self.skip = nn.Conv1d(residual_channels, skip_channels, kernel_size=1, bias=True)
@@ -115,7 +118,7 @@ class WaveNetLayer(nn.Module):
         return x
 
     def forward(self, x, c=None):
-        x = self.causal(x)
+        x = self.conv(x)
         if c is not None:
             x = self._condition(x, c)
 
@@ -132,19 +135,19 @@ class WaveNetLayer(nn.Module):
 
 
 class WaveNet(nn.Module):
-    def __init__(self, args, create_layers=True, shift_input=True):
+    def __init__(self, blocks, layers, in_channel, out_channel, residual_channels, skip_channels=None,
+                 cond_channels=None, kernel_size=2, create_layers=True, causal_input=False):
         super().__init__()
 
-        self.blocks = args.blocks
-        self.layer_num = args.layers
-        self.kernel_size = args.kernel_size
-        self.skip_channels = args.skip_channels
-        self.residual_channels = args.residual_channels
-        self.cond_channels = args.latent_d
-        self.in_channel = args.in_channel
-        self.classes = args.out_channel
-        self.shift_input = shift_input
-        self.normalize_input = args.wavenet_normalize_input
+        self.blocks = blocks
+        self.layer_num = layers
+        self.kernel_size = kernel_size
+        self.in_channel = in_channel
+        self.classes = out_channel
+        self.residual_channels = residual_channels
+        self.skip_channels = skip_channels if skip_channels is not None else residual_channels
+        self.cond_channels = cond_channels if cond_channels is not None else residual_channels
+        self.causal_input = causal_input
 
         if create_layers:
             layers = []
@@ -152,7 +155,7 @@ class WaveNet(nn.Module):
                 for i in range(self.layer_num):
                     dilation = 2 ** i
                     layers.append(WaveNetLayer(self.residual_channels, self.skip_channels, self.cond_channels,
-                                               self.kernel_size, dilation))
+                                               self.kernel_size, dilation, causal_input))
             self.layers = nn.ModuleList(layers)
 
         self.first_conv = CausalConv1d(self.in_channel, self.residual_channels, kernel_size=self.kernel_size)
@@ -184,14 +187,7 @@ class WaveNet(nn.Module):
         return x[:, :, :-1]
 
     def forward(self, x, c=None):
-        if self.normalize_input:
-            if x.dim() < 3:
-                x = x.unsqueeze(1)
-            if (not 'Half' in x.type()) and (not 'Float' in x.type()):
-                x = x.float()
-            x = x / 255 - 0.5
-
-        if self.shift_input:
+        if self.causal_input:
             x = self.shift_right(x)
 
         if c is not None:

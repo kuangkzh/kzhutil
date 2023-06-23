@@ -4,9 +4,10 @@ from torch import nn
 
 
 class SinusoidalPosEmb(nn.Module):
-    def __init__(self, dim):
+    def __init__(self, dim, bias=False):
         super().__init__()
         self.dim = dim
+        self.proj = nn.Sequential(nn.Linear(dim, dim*4), nn.GELU(), nn.Linear(dim*4, dim))
 
     def forward(self, x):
         device = x.device
@@ -15,6 +16,7 @@ class SinusoidalPosEmb(nn.Module):
         emb = torch.exp(torch.arange(half_dim, device=device) * -emb)
         emb = x[:, None] * emb[None, :]
         emb = torch.cat((emb.sin(), emb.cos()), dim=-1)
+        emb = self.proj(emb)
         return emb
 
 

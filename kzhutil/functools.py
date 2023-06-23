@@ -65,3 +65,43 @@ def benchmark(n, f: Callable, *args, **kwargs):
     for _ in range(n):
         f(*args, **kwargs)
     return time.time()-t0
+
+
+def execute_once(f):
+    """
+    execute the function for only once in one life cycle of the program
+    """
+    @functools.wraps(f)
+    def wrapped_f(*args, **kwargs):
+        return execute_once_(f, *args, **kwargs)
+    return wrapped_f
+
+
+def execute_once_(f: Callable, *args, attach_id: str = None, **kwargs):
+    call_id = f if attach_id is None else (f, attach_id)
+    execute_once_.stat = getattr(execute_once_, "stat", set())
+    if call_id not in execute_once_.stat:
+        execute_once_.stat.add(call_id)
+        return f(*args, **kwargs)
+
+
+class ExecuteOnce:
+    """
+    execute the function for only once in one life cycle of the program
+    Example:
+        >>> for _ in ExecuteOnce("xxx"):    # the code under here only execute once
+        >>>     pass
+    """
+    stat = set()
+
+    def __init__(self, attach_id: str):
+        self.repeat = attach_id in self.stat
+        self.stat.add(attach_id)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.repeat:
+            raise StopIteration
+        self.repeat = True

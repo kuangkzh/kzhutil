@@ -42,7 +42,7 @@ Functools
 ### try_for(n)
 A decorator to try a function up to n times till success. Useful for function with failure probability. e.g. web crawler.
 
-一个函数装饰器，可以让后面的函数最多尝试n次，直到某次运行成功再返回。适合用于爬虫这类有成果概率的场景。
+一个函数装饰器，可以让后面的函数最多尝试n次，直到某次运行成功再返回。适合用于爬虫这类有成功概率的场景。
 
 ```python
 import random
@@ -162,9 +162,12 @@ Euler's totient function.
 
 torch
 ----------
-utils for pyroch
+utils for pytorch
 ### set_seed(seed)
 set seed for torch, numpy, random
+
+## torch.modules
+modules for pytorch
 
 transformers
 -----------
